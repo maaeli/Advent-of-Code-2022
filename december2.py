@@ -29,6 +29,20 @@ class Choice(Enum):
             return False
         return NotImplemented
 
+    def beats_me(self):
+        if self == Choice.ROCK:
+            return self.PAPER
+        if self == Choice.PAPER:
+            return Choice.SCISSORS
+        return self.ROCK
+
+    def i_beat(self):
+        if self == Choice.ROCK:
+            return self.SCISSORS
+        if self == Choice.PAPER:
+            return Choice.ROCK
+        return self.PAPER
+
 
 class Outcome(Enum):
     """Represenation of the result of a round."""
@@ -36,6 +50,9 @@ class Outcome(Enum):
     THEY_WIN = 0
     DRAW = 1
     I_WIN = 2
+    X = THEY_WIN
+    Y = DRAW
+    Z = I_WIN
 
 
 class Round:
@@ -59,11 +76,44 @@ class Round:
 
 
 def total_points(results: str) -> int:
-    """Calculate the total number of points in a game."""
+    """Calculate the total number of points in a game for a given list of rounds."""
     return sum(
         [
             Round(round).calculate_my_score()
             for round in results.split("\n")
+            if len(round) > 1
+        ]
+    )
+
+
+def choice_for_outcome(outcome_description: str) -> Choice:
+    """Determine which Choice I need for a given outcome."""
+    if Outcome[outcome_description[-1]] == Outcome.DRAW:
+        return Choice[outcome_description[0]]
+    if Outcome[outcome_description[-1]] == Outcome.THEY_WIN:
+        return Choice[outcome_description[0]].i_beat()
+    return Choice[outcome_description[0]].beats_me()
+
+
+def round_for_outcome(outcome_description: str) -> Round:
+    """Find the round that produces a given outcome."""
+    choice_to_letter = {
+        Choice.ROCK: "A",
+        Choice.PAPER: "B",
+        Choice.SCISSORS: "C",
+    }
+    return Round(
+        outcome_description[0:2]
+        + choice_to_letter[choice_for_outcome(outcome_description)]
+    )
+
+
+def total_points_for_outcomes(outcomes: str) -> int:
+    """Calculate the total number of points in a game for a given list of outcomes."""
+    return sum(
+        [
+            round_for_outcome(round).calculate_my_score()
+            for round in outcomes.split("\n")
             if len(round) > 1
         ]
     )
@@ -75,4 +125,8 @@ if __name__ == "__main__":
     print(december2_game_result)
     print(
         "Total number of points for me: ", total_points(december2_game_result)
+    )
+    print(
+        "Total number of points for me, producing outcome: ",
+        total_points_for_outcomes(december2_game_result),
     )
