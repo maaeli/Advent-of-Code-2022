@@ -6,6 +6,7 @@ from december1 import (
     total_load_per_elf,
     load_list_per_elf,
     transform_to_int,
+    sum_of_three_largest_loads,
 )
 
 EXAMPLE_INPUT = """1000
@@ -71,3 +72,9 @@ def test_elf_with_largest_load_example():
     """Using the provided example,
     test that the elf with the largest load is determined correctly."""
     assert elf_with_largest_load(EXAMPLE_INPUT) == 4
+
+
+def test_sum_of_three_largest_loads_example():
+    """Using the provided example,
+    test that the sum of the three largest loads per elf is calculated correctly."""
+    assert sum_of_three_largest_loads(EXAMPLE_INPUT) == 45000

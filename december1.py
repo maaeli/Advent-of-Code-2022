@@ -35,8 +35,17 @@ def largest_load_per_elf(load_list: str) -> int:
     return max(total_load_per_elf(load_list))
 
 
+def sum_of_three_largest_loads(load_list: str) -> int:
+    """Calcalte the combined load of the three elfs carrying the largest load."""
+    return sum(sorted(total_load_per_elf(load_list), reverse=True)[:3])
+
+
 if __name__ == "__main__":
     with open("december1_input.txt") as file:
         december1_load = file.read()
     print("Elf with largest load: ", elf_with_largest_load(december1_load))
-    print("Largest laod of an elf: ", largest_load_per_elf(december1_load))
+    print("Largest load of an elf: ", largest_load_per_elf(december1_load))
+    print(
+        "Sum of the three largest loads: ",
+        sum_of_three_largest_loads(december1_load),
+    )
