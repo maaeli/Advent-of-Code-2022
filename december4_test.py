@@ -7,6 +7,8 @@ from december4 import (
     parse_assignment,
     complete_assignment_overlap,
     total_number_of_complete_overlap_pairs,
+    partial_assignment_overlap,
+    total_number_of_partial_overlap_pairs,
 )
 
 
@@ -19,10 +21,28 @@ from december4 import (
         ("2-8,3-7", True),
         ("6-6,4-6", True),
         ("2-6,4-8", False),
+        ("4-6,6-6", True),
     ],
 )
 def test_complete_assignment_overlap(pair, full_subset):
     assert complete_assignment_overlap(pair) == full_subset
+
+
+@pytest.mark.parametrize(
+    "pair, partial_subset",
+    [
+        ("2-4,6-8", False),
+        ("2-3,4-5", False),
+        ("5-7,7-9", True),
+        ("2-8,3-7", True),
+        ("6-6,4-6", True),
+        ("2-6,4-8", True),
+        ("4-8,2-6", True),
+        ("6-8,2-4", False),
+    ],
+)
+def test_partial_assignment_overlap(pair, partial_subset):
+    assert partial_assignment_overlap(pair) == partial_subset
 
 
 @pytest.mark.parametrize(
@@ -56,3 +76,15 @@ def test_total_number_of_complete_overlap_pairs():
 2-6,4-8
 """
     assert total_number_of_complete_overlap_pairs(test_input) == 2
+
+
+def test_total_number_of_partial_overlap_pairs():
+    test_input = """
+    2-4,6-8
+2-3,4-5
+5-7,7-9
+2-8,3-7
+6-6,4-6
+2-6,4-8
+"""
+    assert total_number_of_partial_overlap_pairs(test_input) == 4
