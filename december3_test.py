@@ -9,6 +9,8 @@ from december3 import (
     priority_of_item,
     priority_of_backpack,
     total_priority,
+    badge_of_group,
+    total_badge_priority,
 )
 
 
@@ -83,3 +85,40 @@ ttgJtRGJQctTZtZT
 CrZsJsPPZsGzwwsLwLmpwMDw
     """
     assert total_priority(all_backpacks) == 157
+
+
+@pytest.mark.parametrize(
+    "backpacks, badge",
+    [
+        (
+            (
+                "vJrwpWtwJgWrhcsFMMfFFhFp",
+                "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+                "PmmdzqPrVvPwwTWBwg",
+            ),
+            "r",
+        ),
+        (
+            (
+                "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+                "ttgJtRGJQctTZtZT",
+                "CrZsJsPPZsGzwwsLwLmpwMDw",
+            ),
+            "Z",
+        ),
+    ],
+)
+def test_badge_of_group(backpacks, badge):
+    assert badge_of_group(backpacks) == badge
+
+
+def test_total_badge_priority():
+    all_backpacks = """
+vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw
+    """
+    assert total_badge_priority(all_backpacks) == 70

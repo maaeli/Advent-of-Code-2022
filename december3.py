@@ -36,7 +36,22 @@ def total_priority(all_backpacks: str) -> int:
     )
 
 
+def badge_of_group(bagpacks: Tuple[str, str, str]) -> str:
+    return (set(bagpacks[0]) & set(bagpacks[1]) & set(bagpacks[2])).pop()
+
+
+def total_badge_priority(all_backpacks: str) -> int:
+    backpacks = [
+        backpack for backpack in all_backpacks.split("\n") if backpack != ""
+    ]
+    return sum(
+        priority_of_item(badge_of_group(group))
+        for group in zip(backpacks[::3], backpacks[1::3], backpacks[2::3])
+    )
+
+
 if __name__ == "__main__":
     with open("december3_input.txt") as file:
         december3_backpacks = file.read()
     print("Load resorting priority: ", total_priority(december3_backpacks))
+    print("Badge priority: ", total_badge_priority(december3_backpacks))
