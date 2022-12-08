@@ -11,6 +11,8 @@ from december7 import (
     add_from_ls_line,
 )
 
+from copy import copy
+
 EXAMPLE = """
 $ cd /
 $ ls
@@ -74,6 +76,13 @@ FOLDER_A = (
     .add_folder("e")
 )
 
+FOLDER_A_COMPLETE = (
+    Folder()
+    .add_file("f", 29116)
+    .add_file("g", 2557)
+    .add_file("h.lst", 62596)
+    .add_folder("e")
+).update_folder("e", FOLDER_E)
 
 FOLDER_ROOT = (
     Folder()
@@ -81,6 +90,16 @@ FOLDER_ROOT = (
     .add_file("c.dat", 8504156)
     .add_folder("a")
     .add_folder("d")
+)
+
+FOLDER_ROOT_COMPLETE = (
+    Folder()
+    .add_file("b.txt", 14848514)
+    .add_file("c.dat", 8504156)
+    .add_folder("a")
+    .add_folder("d")
+    .update_folder("a", FOLDER_A_COMPLETE)
+    .update_folder("d", FOLDER_D)
 )
 
 FOLDER_ROOT_LS = """
@@ -106,10 +125,13 @@ def test_parse_single_ls(ls_output, folder):
 
 def test_parse_complete_tree():
     root = parse_complete_tree(EXAMPLE)
-    a_nested = FOLDER_A.update_folder("e", FOLDER_E)
-    root_nested = FOLDER_ROOT.update_folder("a", a_nested).update_folder(
-        "d", FOLDER_D
+    a_nested = copy(FOLDER_A).update_folder("e", FOLDER_E)
+    root_nested = (
+        copy(FOLDER_ROOT)
+        .update_folder("a", a_nested)
+        .update_folder("d", FOLDER_D)
     )
+    assert root == FOLDER_ROOT_COMPLETE
     assert root == root_nested
 
 
@@ -138,3 +160,20 @@ def test_folder_equal():
     ) == Folder().add_file("k", 4160174).add_file("j", 4060174)
     assert Folder().add_folder("j") == Folder().add_folder("j")
     assert Folder().add_folder("k") != Folder().add_folder("j")
+
+
+@pytest.mark.parametrize(
+    " folder, size",
+    [
+        (FOLDER_E, 584),
+        (FOLDER_A_COMPLETE, 94853),
+        (FOLDER_D, 24933642),
+        (FOLDER_ROOT_COMPLETE, 48381165),
+    ],
+)
+def test_folder_size(folder, size):
+    assert folder.size == size
+
+
+def test_sum_of_large_folder():
+    assert FOLDER_ROOT_COMPLETE.sum_of_small_sub_folders() == 95437

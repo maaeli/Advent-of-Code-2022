@@ -34,6 +34,20 @@ class Folder:
         self.folders[folder_name] = folder_value
         return self
 
+    def sum_of_small_sub_folders(self):
+        return sum(
+            [
+                folder.size
+                for folder in self.folders.values()
+                if folder.size <= 100000
+            ]
+        ) + sum(
+            [
+                folder.sum_of_small_sub_folders()
+                for folder in self.folders.values()
+            ]
+        )
+
     @property
     def parent(self):
         if self._parent == None:
@@ -41,24 +55,28 @@ class Folder:
         else:
             return self._parent
 
+    @property
+    def size(self):
+        return sum([file.size for file in self.files]) + sum(
+            [folder.size for folder in self.folders.values()]
+        )
+
 
 class File:
-    def __init__(self, file_name: str, file_size: int):
+    def __init__(self, file_name: str, size: int):
         self.file_name = file_name
-        self.file_size = file_size
+        self.size = size
 
     def __eq__(self, other: object):
         if not isinstance(other, File):
             return NotImplemented
-        return (self.file_name == other.file_name) & (
-            self.file_size == other.file_size
-        )
+        return (self.file_name == other.file_name) & (self.size == other.size)
 
     def __hash__(self):
-        return hash((self.file_name, self.file_size))
+        return hash((self.file_name, self.size))
 
     def __str__(self):
-        return f"{self.file_name}, {self.file_size}"
+        return f"{self.file_name}, {self.size}"
 
 
 def add_from_ls_line(folder: Folder, line: str):
@@ -88,7 +106,6 @@ def parse_complete_tree(commands: str) -> Folder:
     for line in splitted[1:]:
         if line[0] != "$":
             current_folder.add_from_ls_line(line)
-            print(current_folder)
             continue
         elif line == "$ cd ..":
             current_folder = current_folder.parent
@@ -102,5 +119,9 @@ def parse_complete_tree(commands: str) -> Folder:
 
 
 if __name__ == "__main__":
-    with open("december6_input.txt") as file:
-        december6_signal = file.read()
+    with open("december7_input.txt") as file:
+        december7_commands = file.read()
+    print(
+        "What is the sum of the total sizes of those directories? ",
+        parse_complete_tree(december7_commands).sum_of_small_sub_folders(),
+    )
