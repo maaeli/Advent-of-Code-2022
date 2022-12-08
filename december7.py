@@ -8,7 +8,7 @@ class Folder:
     def __init__(self, parent=None):
         self.files: Set[File] = set()
         self.folders: Dict[Folder] = {}
-        self._parent = None
+        self._parent = parent
 
     def add_file(self, file_name: str, size: int):
         self.files.add(File(file_name, size))
@@ -61,28 +61,43 @@ class File:
         return f"{self.file_name}, {self.file_size}"
 
 
+def add_from_ls_line(folder: Folder, line: str):
+    if line[:3] == "dir":
+        name = line[4:]
+        folder.add_folder(name)
+    else:
+        size, name = line.split(" ")
+        folder.add_file(name, int(size))
+    return folder
+
+
+Folder.add_from_ls_line = add_from_ls_line
+
+
 def parse_folder_ls(ls: str) -> Folder:
     new_folder = Folder()
     for line in split_input(ls, "\n"):
-        if line[:3] == "dir":
-            name = line[4:]
-            new_folder.add_folder(name)
-        else:
-            size, name = line.split(" ")
-            new_folder.add_file(name, int(size))
+        new_folder = add_from_ls_line(new_folder, line)
     return new_folder
 
 
 def parse_complete_tree(commands: str) -> Folder:
     splitted = split_input(commands, "\n")
-    root_ls = ""
-    for line in splitted[2:]:
+    root = Folder()
+    current_folder = root
+    for line in splitted[1:]:
         if line[0] != "$":
-            root_ls += line + "\n"
+            current_folder.add_from_ls_line(line)
+            print(current_folder)
+            continue
+        elif line == "$ cd ..":
+            current_folder = current_folder.parent
+        elif line == "$ cd /":
+            continue
+        elif line[:4] == "$ cd":
+            current_folder = current_folder.folders[line[5:]]
         else:
-            break
-    print(root_ls)
-    root = parse_folder_ls(root_ls)
+            continue
     return root
 
 

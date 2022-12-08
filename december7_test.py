@@ -3,7 +3,13 @@
 
 import pytest
 
-from december7 import Folder, File, parse_folder_ls, parse_complete_tree
+from december7 import (
+    Folder,
+    File,
+    parse_folder_ls,
+    parse_complete_tree,
+    add_from_ls_line,
+)
 
 EXAMPLE = """
 $ cd /
@@ -95,8 +101,6 @@ dir d
     ],
 )
 def test_parse_single_ls(ls_output, folder):
-    print(folder)
-    print(parse_folder_ls(ls_output))
     assert parse_folder_ls(ls_output) == folder
 
 
@@ -107,6 +111,19 @@ def test_parse_complete_tree():
         "d", FOLDER_D
     )
     assert root == root_nested
+
+
+def test_folder_hierachy():
+    a_folder = Folder()
+    assert a_folder.add_folder("b").folders["b"].parent is a_folder
+
+
+def test_add_from_ls_line():
+    assert Folder().add_file("j", 4060174) == add_from_ls_line(
+        Folder(), "4060174 j"
+    )
+    assert Folder().add_folder("j") == add_from_ls_line(Folder(), "dir j")
+    assert Folder().add_folder("j") == Folder().add_from_ls_line("dir j")
 
 
 def test_folder_equal():
