@@ -5,10 +5,12 @@ import pytest
 
 from december7 import (
     Folder,
-    File,
+    get_smallest_subdir_above_threshold,
     parse_folder_ls,
     parse_complete_tree,
     add_from_ls_line,
+    get_threshold,
+    size_of_file_to_delete,
 )
 
 from copy import copy
@@ -177,3 +179,26 @@ def test_folder_size(folder, size):
 
 def test_sum_of_large_folder():
     assert FOLDER_ROOT_COMPLETE.sum_of_small_sub_folders() == 95437
+
+
+def test_sizes_of_all_subdirectories():
+    assert FOLDER_ROOT_COMPLETE.sizes_of_all_subdirectories() == {
+        584,
+        94853,
+        24933642,
+        48381165,
+    }
+
+
+def test_smallest_subdir():
+    assert (
+        get_smallest_subdir_above_threshold(FOLDER_ROOT, 8381165) == 24933642
+    )
+
+
+def test_find_threshold():
+    assert get_threshold(FOLDER_ROOT) == 8381165
+
+
+def test_size_of_file_to_delete():
+    assert size_of_file_to_delete(FOLDER_ROOT) == 24933642

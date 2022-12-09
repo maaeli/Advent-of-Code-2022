@@ -48,6 +48,14 @@ class Folder:
             ]
         )
 
+    def sizes_of_all_subdirectories(self):
+        sizes = set([folder.size for folder in self.folders.values()]) | {
+            self.size
+        }
+        for folder in self.folders.values():
+            sizes = sizes | folder.sizes_of_all_subdirectories()
+        return sizes
+
     @property
     def parent(self):
         if self._parent == None:
@@ -118,10 +126,34 @@ def parse_complete_tree(commands: str) -> Folder:
     return root
 
 
+def get_smallest_subdir_above_threshold(folder: Folder, threshold: int) -> 0:
+    return min(
+        [
+            size
+            for size in folder.sizes_of_all_subdirectories()
+            if size > threshold
+        ]
+    )
+
+
+def get_threshold(folder: Folder):
+    return -(70000000 - 30000000 - folder.size)
+
+
+def size_of_file_to_delete(folder: Folder):
+    threshold = get_threshold(folder)
+    return get_smallest_subdir_above_threshold(folder, threshold)
+
+
 if __name__ == "__main__":
     with open("december7_input.txt") as file:
         december7_commands = file.read()
     print(
         "What is the sum of the total sizes of those directories? ",
         parse_complete_tree(december7_commands).sum_of_small_sub_folders(),
+    )
+
+    print(
+        "What is the total size of that directory?",
+        size_of_file_to_delete(parse_complete_tree(december7_commands)),
     )
