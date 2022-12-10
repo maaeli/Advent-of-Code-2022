@@ -3,7 +3,7 @@
 
 import pytest
 
-from december8 import tree_is_visible, number_of_visible_trees
+from december8 import tree_is_visible, number_of_visible_trees, scenic_score
 
 
 TEST_INPUT = """
@@ -37,6 +37,12 @@ def test_tree_is_visible():
 
     assert tree_is_visible(UP_TEST, position=(1, 1))
     assert tree_is_visible(DOWN_TEST, position=(1, 1))
+
+
+def test_scenic_score():
+
+    assert scenic_score(TEST_INPUT, position=(1, 2)) == 4
+    assert scenic_score(TEST_INPUT, position=(3, 2)) == 8
 
 
 def test_number_of_visible_trees():
