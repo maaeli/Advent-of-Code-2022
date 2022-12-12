@@ -155,6 +155,15 @@ noop
 noop
 """
 
+image = """
+##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######.....
+"""
+
 
 @pytest.mark.parametrize(
     "initial_clock, initial_X, operation, final_clock, final_X",
@@ -223,3 +232,9 @@ def test_total_signal():
     proc = Processor(0, 1)
 
     assert proc.op_list(INSTRUCTIONS).signal == 13140
+
+
+def test_drawing():
+    proc = Processor(0, 1)
+
+    assert proc.op_list(INSTRUCTIONS).image(40, 6) == image

@@ -32,6 +32,19 @@ class Processor:
             self.single_op(instruction)
         return self
 
+    def image(self, columns, rows):
+        s = "\n"
+        for r in range(rows):
+            for time in range(columns):
+                sprite_center = self.value_trace[time + columns * r]
+                sprite = [sprite_center - 1, sprite_center, sprite_center + 1]
+                if time in sprite:
+                    s += "#"
+                else:
+                    s += "."
+            s += "\n"
+        return s
+
 
 def single_op(
     initial_clock: int, initial_X: int, operation: str
@@ -51,3 +64,6 @@ if __name__ == "__main__":
     with open("december10_input.txt") as file:
         december10_instructions = file.read()
     print("Signal", Processor(0, 1).op_list(december10_instructions).signal)
+    print(
+        "Image", Processor(0, 1).op_list(december10_instructions).image(40, 6)
+    )
